@@ -1,4 +1,28 @@
 basePath: /api/v1
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  salon-app_backend_internal_model.User:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -23,4 +47,21 @@ paths:
       summary: 疎通確認
       tags:
       - system
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: データベースから全てのユーザーを取得する
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/salon-app_backend_internal_model.User'
+            type: array
+      summary: ユーザー一覧取得
+      tags:
+      - users
 swagger: "2.0"

@@ -29,6 +29,22 @@ func PingHandler(c *gin.Context) {
     c.JSON(200, gin.H{"message": "Hello from Go Backend!"})
 }
 
+// @Summary      ユーザー一覧取得
+// @Description  データベースから全てのユーザーを取得する
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Success      200 {array} model.User
+// @Router       /users [get]
+func GetUsersHandler(c *gin.Context) {
+    var users []model.User
+    if err := db.DB.Find(&users).Error; err != nil {
+        c.JSON(500, gin.H{"error": err.Error()})
+        return
+    }
+    c.JSON(200, users)
+}
+
 func main() {
     db.InitDB()
     db.DB.AutoMigrate(&model.User{})
@@ -46,6 +62,7 @@ func main() {
     {
         // main関数の中のインライン定義ではなく、上で定義した関数を使う
         v1.GET("/ping", PingHandler)
+        v1.GET("/users", GetUsersHandler)
     }
 
     r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
