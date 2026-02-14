@@ -1,0 +1,29 @@
+services:
+  db: # DBの設定(PostgreSQL)
+    image: postgres:15-alpine
+    container_name: salon-db
+    env_file: .env  
+    environment:
+      # POSTGRES_USER など、特定の名前が必要なものだけマッピング
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: # goの設定
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: salon-backend
+    env_file: .env  
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db   # ここだけはサービス名固定
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
