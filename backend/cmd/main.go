@@ -10,6 +10,8 @@ import (
 
     "github.com/gin-contrib/cors"
     "github.com/gin-gonic/gin"
+    "salon-app/backend/internal/handler" 
+    "salon-app/backend/internal/utils"   
     swaggerFiles "github.com/swaggo/files"
     ginSwagger "github.com/swaggo/gin-swagger"
 
@@ -29,20 +31,84 @@ func PingHandler(c *gin.Context) {
     c.JSON(200, gin.H{"message": "Hello from Go Backend!"})
 }
 
-// @Summary      ユーザー一覧取得
-// @Description  データベースから全てのユーザーを取得する
-// @Tags         users
+// @Summary      新規登録
+// @Description  新規登録
+// @Tags         system
 // @Accept       json
 // @Produce      json
-// @Success      200 {array} model.User
-// @Router       /users [get]
-func GetUsersHandler(c *gin.Context) {
-    var users []model.User
-    if err := db.DB.Find(&users).Error; err != nil {
+// @Success      200 {object} map[string]string
+// @Router       /signup [post]
+func SignUpHandler(c *gin.Context) {
+    var req handler.SignUpRequest // APIの構造体を定義
+    if err := c.ShouldBindJSON(&req); err != nil { //APIの値をチェック
+        c.JSON(400, gin.H{"error": "入力が正しくありません"})
+        return
+    }
+    hashed, err := utils.HashPassword(req.Password)
+    if err != nil {
+        c.JSON(500, gin.H{"error": "ハッシュ化失敗"})
+        return
+    }
+    //DBに保存する構造体を定義
+    var user model.User
+    user.Name = req.Name
+    user.Email = req.Email
+    user.Password = hashed
+    if err := db.DB.Create(&user).Error; err != nil {
         c.JSON(500, gin.H{"error": err.Error()})
         return
     }
-    c.JSON(200, users)
+    c.JSON(200, gin.H{"message": "登録完了"})
+}
+
+// @Summary      ログイン
+// @Description  ログイン
+// @Tags         system
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} map[string]string
+// @Router       /login [post]
+func LoginHandler(c *gin.Context) {
+    var req handler.LoginRequest
+    // リクエストのバリデーション（EmailとPasswordがあるか）
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(400, gin.H{"error": "入力が正しくありません"})
+        return
+    }
+
+    // データベースからユーザーを検索
+    var user model.User
+    if err := db.DB.Where("email = ?", req.Email).First(&user).Error; err != nil {
+        // ユーザーが見つからない場合
+        c.JSON(401, gin.H{"error": "メールアドレスがありません"})
+        return
+    }
+
+    // パスワードの照合 (Argon2)
+    // 保存されているハッシュ(user.Password)と、入力された平文(req.Password)を比較
+    match, err := utils.CheckPassword(req.Password, user.Password)
+    if err != nil || !match {
+        c.JSON(401, gin.H{"error": "パスワードが正しくありません"})
+        return
+    }
+
+    // JWTトークンの生成
+    // ログイン成功！ユーザーIDと権限（Role）をトークンに詰め込む
+    token, err := utils.GenerateToken(user.ID, user.Role)
+    if err != nil {
+        c.JSON(500, gin.H{"error": "トークンの生成に失敗しました"})
+        return
+    }
+
+    // 成功レスポンス（トークンを返す）
+    c.JSON(200, gin.H{
+        "message": "ログイン成功",
+        "token":   token, // フロントエンドはこれを受け取って保存する
+        "user": gin.H{
+            "name": user.Name,
+            "role": user.Role,
+        },
+    })
 }
 
 func main() {
@@ -62,7 +128,8 @@ func main() {
     {
         // main関数の中のインライン定義ではなく、上で定義した関数を使う
         v1.GET("/ping", PingHandler)
-        v1.GET("/users", GetUsersHandler)
+        v1.POST("/signup", SignUpHandler) // 新規登録
+        v1.POST("/login", LoginHandler)   // ログイン
     }
 
     r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

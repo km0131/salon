@@ -1,28 +1,4 @@
 basePath: /api/v1
-definitions:
-  gorm.DeletedAt:
-    properties:
-      time:
-        type: string
-      valid:
-        description: Valid is true if Time is not NULL
-        type: boolean
-    type: object
-  salon-app_backend_internal_model.User:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        $ref: '#/definitions/gorm.DeletedAt'
-      email:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      updatedAt:
-        type: string
-    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -30,6 +6,23 @@ info:
   title: Salon App API
   version: "1.0"
 paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: ログイン
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: ログイン
+      tags:
+      - system
   /ping:
     get:
       consumes:
@@ -47,21 +40,21 @@ paths:
       summary: 疎通確認
       tags:
       - system
-  /users:
-    get:
+  /signup:
+    post:
       consumes:
       - application/json
-      description: データベースから全てのユーザーを取得する
+      description: 新規登録
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/salon-app_backend_internal_model.User'
-            type: array
-      summary: ユーザー一覧取得
+            additionalProperties:
+              type: string
+            type: object
+      summary: 新規登録
       tags:
-      - users
+      - system
 swagger: "2.0"

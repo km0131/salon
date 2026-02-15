@@ -5,6 +5,21 @@ info:
   title: Salon App API
   version: "1.0"
 paths:
+  /login:
+    post:
+      description: ログイン
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+      summary: ログイン
+      tags:
+        - system
   /ping:
     get:
       description: サーバーの生存確認用
@@ -18,6 +33,21 @@ paths:
                   type: string
                 type: object
       summary: 疎通確認
+      tags:
+        - system
+  /signup:
+    post:
+      description: 新規登録
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+      summary: 新規登録
       tags:
         - system
 servers:

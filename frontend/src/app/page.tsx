@@ -6,7 +6,7 @@ export default function Home() {
 
   useEffect(() => {
     // UbuntuのTailscale IPを指定
-    fetch("http://localhost:8080/api/v1/ping")
+    fetch("https://api.kiiswebai.com/api/v1/ping")
       .then((res) => res.json())
       .then((data) => setMessage(data.message))
       .catch(() => setMessage("APIへの接続に失敗しました"));
