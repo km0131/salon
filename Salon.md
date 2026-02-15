@@ -39,21 +39,23 @@ salon-app/
 │   │   └── main.go         # サーバー起動設定、基本ルート
 │   ├── internal/           # 内部ロジック（カプセル化）
 │   │   ├── db/             # DB接続設定 (client.go)
-│   │   └── model/          # データモデル定義 (user.go)
+│   │   ├── handler/        # リクエストハンドラ (handler.go)
+│   │   ├── model/          # データモデル定義 (user.go)
+│   │   └── utils/          # ユーティリティ (jwt.go, utils.go)
 │   ├── docs/               # 生成されたSwagger/OpenAPIドキュメント
 │   ├── .air.toml           # Air（ホットリロード）設定
 │   ├── Dockerfile          # バックエンド用ビルド設定
 │   └── go.mod / go.sum     # Go 依存管理
 ├── frontend/               # Next.js フロントエンド
-│   ├── public/             # 静的アセット
+│   ├── public/             # 静的アセット（logo.png, favicon.ico 等）
 │   ├── src/
+│   │   ├── api/            # API連携
+│   │   │   └── api.d.ts    # 自動生成されたTypeScript型定義
 │   │   ├── app/            # App Router 画面・レイアウト
-│   │   │   ├── layout.tsx  # ルートレイアウト（Providers等）
+│   │   │   ├── layout.tsx  # ルートレイアウト（メタデータ、Providers等）
 │   │   │   ├── page.tsx    # ホーム画面（疎通確認テスト含む）
 │   │   │   ├── providers.tsx # React Query等の設定
 │   │   │   └── globals.css # グローバルスタイル
-│   │   ├── api/            # API連携
-│   │   │   └── api.d.ts    # 自動生成されたTypeScript型定義
 │   │   └── hooks/          # カスタムフック (useUsers.ts等)
 │   ├── next.config.ts      # Next.js 設定
 │   ├── package.json        # フロントエンド依存管理
@@ -74,9 +76,9 @@ salon-app/
 make gen-api
 ```
 このコマンドは以下の処理を順次実行します：
-1. `swag init`: GoのコメントからSwagger 2.0ファイルを生成。
-2. `swagger2openapi`: Swagger 2.0をOpenAPI 3.0に変換。
-3. `openapi-typescript`: OpenAPI 3.0からTypeScript型定義を生成。
+1. `swag init`: Goのコメントから Swagger 2.0 ファイルおよび `docs/docs.go` を生成。
+2. `swagger2openapi`: Swagger 2.0 を OpenAPI 3.0 に変換。
+3. `openapi-typescript`: OpenAPI 3.0 から TypeScript 型定義を生成。
 
 ### データベース同期
 バックエンド起動時にGORMの `AutoMigrate` 機能を使用して、`internal/model` で定義された構造体を基にDBテーブルを自動生成・更新します。
@@ -95,7 +97,7 @@ graph TD
     end
 
     subgraph Process ["② 自動生成プロセス (make gen-api)"]
-        B["swag init<br/>(Swagger 2.0生成)"]
+        B["swag init<br/>(Swagger 2.0 & docs.go生成)"]
         C["swagger2openapi<br/>(OpenAPI 3.0変換)"]
         D["openapi-typescript<br/>(TS型定義生成)"]
     end
@@ -187,3 +189,36 @@ air
 cd frontend
 npm run dev
 ```
+## 運用ドメイン
+
+### Backend
+- APIドメイン
+```
+https://api.kiiswebai.com/
+```
+localhost:8080につながってる
+
+- swaggerアクセス
+**ローカル**
+[ローカル](http://localhost:8080/swagger/index.html#/)
+**グローバル**
+[グローバル](https://api.kiiswebai.com/swagger/index.html#/)
+
+- API確認用
+[API起動確認用](https://api.kiiswebai.com/api/v1/ping)
+
+### Frontend
+
+- スタート画面
+[スタート画面](https://salon.kiiswebai.com/)
+
+localhost:3000につながっている
+
+- ログイン画面
+[ログイン画面](https://salon.kiiswebai.com/login)
+
+### Cloudflare Tunnelを使って接続
+ トンネル名：salon
+ アプリケーションルール：
+ - フロント:https://salon.kiiswebai.com/→localhost:3000
+ - バックエンド：https://api.kiiswebai.com/→localhost:8080

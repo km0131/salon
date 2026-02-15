@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'; // 型をインポート
+import "./globals.css";
 import Providers from './providers';
 
 export const metadata: Metadata = {

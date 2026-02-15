@@ -1,26 +1,33 @@
 @import "tailwindcss";
 
+/* Tailwind 4 では @theme ブロックでカスタム変数を定義できます。
+  既存の :root 定義を整理し、Tailwind のユーティリティを優先させます。
+*/
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* ダークモードは一旦シンプルにしておき、デザイン崩れを防ぎます */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    /* デザイン優先のため一旦白で固定、または削除 */
+    --foreground: #171717;
   }
 }
 
+/* 重要：body に background: var(--background) を指定すると、
+  LoginPage の bg-linear-to-tr (背景グラデーション) が上書きされて消える場合があります。
+*/
 body {
-  background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
 }
