@@ -52,10 +52,16 @@ salon-app/
 │   │   ├── api/            # API連携
 │   │   │   └── api.d.ts    # 自動生成されたTypeScript型定義
 │   │   ├── app/            # App Router 画面・レイアウト
-│   │   │   ├── layout.tsx  # ルートレイアウト（メタデータ、Providers等）
-│   │   │   ├── page.tsx    # ホーム画面（疎通確認テスト含む）
+│   │   │   ├── layout.tsx  # ルートレイウル（メタデータ、Providers等）
+│   │   │   ├── page.tsx    # ホーム画面
+│   │   │   ├── staff/      # スタッフ管理画面
+│   │   │   │   └── page.tsx # スタッフ登録画面
 │   │   │   ├── providers.tsx # React Query等の設定
 │   │   │   └── globals.css # グローバルスタイル
+│   │   ├── components/     # 共通コンポーネント
+│   │   │   └── AdminPageTemplate.tsx # 管理画面用共通テンプレート
+│   │   ├── context/        # React Context
+│   │   │   └── AuthContext.tsx # 認証・セッション管理
 │   │   └── hooks/          # カスタムフック (useUsers.ts等)
 │   ├── next.config.ts      # Next.js 設定
 │   ├── package.json        # フロントエンド依存管理
@@ -164,6 +170,23 @@ export interface User {
 const user: User = data;
 console.log(user.phone); // 型安全にアクセス可能
 ```
+
+---
+
+## フロントエンド構成要素 (Frontend Components)
+
+### 共通レイアウトテンプレート (`AdminPageTemplate.tsx`)
+管理画面（Admin）にて共通して使用されるレイアウトテンプレートです。以下の要素を提供します：
+- **ヘッダー**: ハンバーガーメニュー、ロゴ、セッションユーザー情報を表示。
+- **ナビゲーション**: メニューボタンからDashboard、Staff Management、Shop Settingsへのリンクを提供。
+- **一貫したデザイン**: 背景グラデーション、ブラー効果を効かせたカードデザインを適用。
+
+### 認証・セッション管理 (`AuthContext.tsx`)
+`React Context` を利用して、アプリケーション全体でユーザーのログイン状態や所属店舗情報を管理します。
+- `AuthProvider`: `layout.tsx` で全体を包むことで、どの画面からでも `useAuth()` フックを使用してユーザー情報にアクセス可能です。
+- **保持データ**: ユーザー名、所属店舗、役職など。
+
+---
 
 ---
 
