@@ -16,4 +16,7 @@ type LoginRequest struct {
 	Password string `json:"password" binding:"required,min=4,max=16"`
 }
 
+type StoreRegistrationRequest struct {
+	Name string `json:"name" binding:"required"`
+}
 

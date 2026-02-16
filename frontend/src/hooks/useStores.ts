@@ -21,14 +21,13 @@ export const useStores = () => {
                 throw new Error("店舗データの取得に失敗しました");
             }
 
-            // 自動生成された型を使用してキャスト
-            const data: StoreResponse = await response.json();
+            // 一旦 any で受け取って構造を強制的に合わせる（または自動生成された型が古ければ修正）
+            const data = await response.json();
 
-            // オブジェクト形式 { "1": "表参道", "2": "青山" } を
-            // 配列形式 [{ id: "1", name: "表参道" }, ...] に変換
-            return Object.entries(data).map(([id, name]) => ({
-                id,
-                name,
+            // Go側が { "stores": [ {id: 1, name: "店名"}, ... ] } を返している場合
+            return (data.stores || []).map((store: { id: number | string; name: string }) => ({
+                id: String(store.id), // 数値で来ても文字列に変換
+                name: store.name,
             }));
         },
     });

@@ -74,4 +74,21 @@ paths:
       summary: 店舗一覧
       tags:
       - system
+  /store-registration:
+    post:
+      consumes:
+      - application/json
+      description: 店舗登録
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 店舗登録
+      tags:
+      - system
 swagger: "2.0"

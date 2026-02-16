@@ -6,11 +6,39 @@ import Image from "next/image";
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         // 今後 TanStack Query でバックエンドと連携
         console.log("Login with:", { email, password });
+        setErrorMsg(null); // 送信時にエラーをクリア
+        setIsLoading(true);
+
+        const payload = {
+            email: email,
+            password: password,
+        };
+        try {
+            // TODO: Goバックエンドへ送信
+            const response = await fetch("https://api.kiiswebai.com/api/v1/login", {
+                method: "POST",
+                mode: "cors", // これを追加
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json", // これも追加しておくと安全
+                },
+                body: JSON.stringify(payload),
+            });
+            if (!response.ok) throw new Error("ログインに失敗しました");
+
+            alert("ログインしました！");
+        } catch (error) {
+            setErrorMsg("パスワードまたはメールアドレスが正しくありません");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -37,7 +65,13 @@ export default function LoginPage() {
                         </h1>
                         <p className="text-sm text-slate-400 mt-1">顧客管理用WEBシステム</p>
                     </div>
-
+                    {/* --- 追加：エラーメッセージの表示エリア --- */}
+                    {errorMsg && (
+                        <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-2xl flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+                            <span className="text-lg">⚠️</span>
+                            {errorMsg}
+                        </div>
+                    )}
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 ml-1">

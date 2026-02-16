@@ -118,6 +118,32 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/store-registration": {
+            "post": {
+                "description": "店舗登録",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "店舗登録",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }`
