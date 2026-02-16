@@ -17,7 +17,7 @@ type User struct {
     // 権限（例: admin, staff, customer）
     Role     string `json:"role" gorm:"default:customer"` 
     StoreID  uint   `json:"store_id"`
-    Store    Store  `json:"store" gorm:"foreignKey:StoreID;-"`//外部から呼び出し
+    Store    Store  `json:"store" gorm:"foreignKey:StoreID"`//外部から呼び出し
 }
 
 type Store struct {

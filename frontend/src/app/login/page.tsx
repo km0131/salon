@@ -2,12 +2,16 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation"; // ルーティング用
+import { useAuth } from "@/context/AuthContext"; // パスはご自身の環境に合わせてください
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
+    const { login } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -31,9 +35,12 @@ export default function LoginPage() {
                 },
                 body: JSON.stringify(payload),
             });
+            const data = await response.json();
             if (!response.ok) throw new Error("ログインに失敗しました");
-
-            alert("ログインしました！");
+            // --- 成功時の処理 ---
+            login(data.token);
+            // ダッシュボードへ移動
+            router.push("/dashboard");
         } catch (error) {
             setErrorMsg("パスワードまたはメールアドレスが正しくありません");
         } finally {

@@ -79,6 +79,7 @@ func SignUpHandler(c *gin.Context) {
     user.Email = req.Email
     user.Password = hashed
     user.StoreID = req.StoreID
+    user.Role = req.Role
     if err := db.DB.Create(&user).Error; err != nil {
         c.Error(err)
         c.JSON(500, gin.H{"error": "Failed to create user"})
@@ -130,7 +131,7 @@ func LoginHandler(c *gin.Context) {
 
     // データベースからユーザーを検索
     var user model.User
-    if err := db.DB.Where("email = ?", req.Email).First(&user).Error; err != nil {
+    if err := db.DB.Preload("Store").Where("email = ?", req.Email).First(&user).Error; err != nil {
         // ユーザーが見つからない場合
         c.Error(err)
         c.JSON(401, gin.H{"error": "メールアドレスがありません"})
