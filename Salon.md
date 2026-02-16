@@ -174,6 +174,18 @@ console.log(user.phone); // 型安全にアクセス可能
 ```bash
 docker compose up --build
 ```
+**ビルド無し**
+```bash
+docker compose up
+```
+**バックエンドだけ再起動**
+```
+docker-compose restart backend
+```
+**フロントエンドだけ再起動**
+```
+docker-compose restart frontend
+```
 
 ### ローカルでの個別起動
 開発時にコンテナを使わず個別に起動する場合の手順です。
@@ -199,26 +211,25 @@ https://api.kiiswebai.com/
 localhost:8080につながってる
 
 - swaggerアクセス
-**ローカル**
-[ローカル](http://localhost:8080/swagger/index.html#/)
-**グローバル**
-[グローバル](https://api.kiiswebai.com/swagger/index.html#/)
 
-- API確認用
-[API起動確認用](https://api.kiiswebai.com/api/v1/ping)
+    - [ローカル](http://localhost:8080/swagger/index.html#/)
+
+    - [グローバル](https://api.kiiswebai.com/swagger/index.html#/)
+
+- [API起動確認用](https://api.kiiswebai.com/api/v1/ping)
 
 ### Frontend
 
-- スタート画面
-[スタート画面](https://salon.kiiswebai.com/)
+- [スタート画面](https://salon.kiiswebai.com/)
 
 localhost:3000につながっている
 
-- ログイン画面
-[ログイン画面](https://salon.kiiswebai.com/login)
+- [ログイン画面](https://salon.kiiswebai.com/login)
 
 ### Cloudflare Tunnelを使って接続
  トンネル名：salon
+
  アプリケーションルール：
+ 
  - フロント:https://salon.kiiswebai.com/→localhost:3000
  - バックエンド：https://api.kiiswebai.com/→localhost:8080

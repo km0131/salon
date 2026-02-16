@@ -26,8 +26,8 @@ export default function LoginPage() {
                             <Image
                                 src="/b1.png"
                                 alt="Salon Logo"
-                                width={150}   // お好みのサイズに調整してください
-                                height={150}
+                                width={200}   // お好みのサイズに調整してください
+                                height={200}
                                 className="object-contain"
                                 priority
                             />

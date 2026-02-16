@@ -57,4 +57,21 @@ paths:
       summary: 新規登録
       tags:
       - system
+  /store:
+    get:
+      consumes:
+      - application/json
+      description: 店舗一覧
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 店舗一覧
+      tags:
+      - system
 swagger: "2.0"

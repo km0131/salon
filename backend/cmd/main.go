@@ -31,6 +31,22 @@ func PingHandler(c *gin.Context) {
     c.JSON(200, gin.H{"message": "Hello from Go Backend!"})
 }
 
+// @Summary      店舗一覧
+// @Description  店舗一覧
+// @Tags         system
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} map[string]string
+// @Router       /store [get]
+func GetStoreHandler(c *gin.Context) {
+    var names []string
+    if err := db.DB.Model(&model.Store{}).Pluck("name", &names).Error; err != nil {
+        c.JSON(500, gin.H{"error": err.Error()})
+        return
+    }
+    c.JSON(200, gin.H{"stores": names})
+}
+
 // @Summary      新規登録
 // @Description  新規登録
 // @Tags         system
@@ -94,7 +110,7 @@ func LoginHandler(c *gin.Context) {
 
     // JWTトークンの生成
     // ログイン成功！ユーザーIDと権限（Role）をトークンに詰め込む
-    token, err := utils.GenerateToken(user.ID, user.Role)
+    token, err := utils.GenerateToken(user.ID, user.Name, user.Role, user.StoreID, user.Store.Name)
     if err != nil {
         c.JSON(500, gin.H{"error": "トークンの生成に失敗しました"})
         return
@@ -128,6 +144,7 @@ func main() {
     {
         // main関数の中のインライン定義ではなく、上で定義した関数を使う
         v1.GET("/ping", PingHandler)
+        v1.GET("/store", GetStoreHandler)//店舗一覧
         v1.POST("/signup", SignUpHandler) // 新規登録
         v1.POST("/login", LoginHandler)   // ログイン
     }

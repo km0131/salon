@@ -1,6 +1,7 @@
-import type { Metadata } from 'next'; // 型をインポート
+import type { Metadata } from 'next';
 import "./globals.css";
 import Providers from './providers';
+import { AuthProvider } from "@/context/AuthContext"; // 追加
 
 export const metadata: Metadata = {
   title: 'Salon App',
@@ -19,7 +20,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja">
       <body>
-        <Providers>{children}</Providers>
+        {/* Providersの中で包むことで、API取得(Query)も認証(Auth)も両方使えるようになります */}
+        <Providers>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </Providers>
       </body>
     </html>
   );
