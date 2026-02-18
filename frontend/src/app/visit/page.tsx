@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from "react";
 import AdminPageTemplate from "@/components/AdminPageTemplate";
 import { useStores } from "@/hooks/useStores";
+import { useCourses } from "@/hooks/useCourse"; // 追加
 
 interface Customer {
-    id: number;
+    ID: number;
     last_name: string;
     first_name: string;
     last_name_kana: string;
@@ -13,6 +14,7 @@ interface Customer {
 
 export default function VisitRegistrationPage() {
     const { data: stores, isLoading: storesLoading } = useStores();
+    const { data: courses, isLoading: coursesLoading } = useCourses(); // 追加
 
     // --- 検索・選択ステート ---
     const [searchQuery, setSearchQuery] = useState("");
@@ -27,6 +29,44 @@ export default function VisitRegistrationPage() {
         memo: "",
     });
 
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!selectedCustomer || !formData.storeId || !formData.courseId) return;
+
+        const payload = {
+            customer_id: Number(selectedCustomer.ID),
+            course_id: Number(formData.courseId),
+            store_id: Number(formData.storeId),
+            memo: formData.memo,
+            visit_count: 1, // 基本は1回消化
+            ticket_id: null, // 必要に応じて拡張
+        };
+
+        try {
+            const res = await fetch("https://api.kiiswebai.com/api/v1/visit-registration", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            console.log("Sending JSON:", JSON.stringify(payload));
+
+            if (res.ok) {
+                alert("来店登録が完了しました！");
+                // フォームのリセット
+                setSelectedCustomer(null);
+                setFormData({ storeId: "", courseId: "", memo: "" });
+            } else {
+                const errData = await res.json();
+                alert(`エラー: ${errData.error || "登録に失敗しました"}`);
+            }
+        } catch (error) {
+            console.error("送信エラー:", error);
+            alert("通信エラーが発生しました");
+        }
+    };
+
     // 検索ロジック (デバウンス)
     useEffect(() => {
         if (!searchQuery.trim() || selectedCustomer) {
@@ -36,21 +76,26 @@ export default function VisitRegistrationPage() {
 
         const timer = setTimeout(async () => {
             setIsSearching(true);
+            console.log(searchQuery);
             try {
-                // TODO: 実際のAPIエンドポイントに合わせて調整
-                // const res = await fetch(`/api/v1/customers/search?q=${searchQuery}`);
-                // const data = await res.json();
+                const res = await fetch("https://api.kiiswebai.com/api/v1/customer-search", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        last_name_kana: searchQuery, // ここに入力された文字列が入る
+                    }),
+                });
 
-                // モックデータでのシミュレーション
-                const mockResults = [
-                    { id: 1, last_name: "山田", first_name: "太郎", last_name_kana: "ヤマダ" },
-                    { id: 2, last_name: "山田", first_name: "花子", last_name_kana: "ヤマダ" },
-                    { id: 3, last_name: "佐藤", first_name: "健一", last_name_kana: "サトウ" },
-                ].filter(c => c.last_name.includes(searchQuery));
-
-                setResults(mockResults);
+                if (res.ok) {
+                    const data: Customer[] = await res.json(); // 配列として受け取る
+                    setResults(data); // そのままセット（複数人表示される）
+                    console.log("検索結果の1件目:", data[0]); // ここで id か ID かを確認！
+                } else {
+                    setResults([]);
+                }
             } catch (error) {
-                console.error(error);
+                console.error("検索エラー:", error);
+                setResults([]);
             } finally {
                 setIsSearching(false);
             }
@@ -73,7 +118,7 @@ export default function VisitRegistrationPage() {
                         <div className="relative">
                             <input
                                 type="text"
-                                placeholder="苗字を入力して検索（例: 山田）"
+                                placeholder="苗字を入力して検索（例: もりやま）"
                                 className="w-full px-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-200 outline-none transition-all text-lg"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -89,7 +134,7 @@ export default function VisitRegistrationPage() {
                                 <div className="absolute z-20 w-full mt-3 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                                     {results.map((c) => (
                                         <button
-                                            key={c.id}
+                                            key={c.ID}
                                             type="button"
                                             className="w-full text-left px-6 py-4 hover:bg-indigo-50 transition-colors border-b border-slate-50 last:border-none flex justify-between items-center"
                                             onClick={() => setSelectedCustomer(c)}
@@ -126,7 +171,7 @@ export default function VisitRegistrationPage() {
 
                 {/* --- 2. 来店詳細フォーム --- */}
                 {selectedCustomer && (
-                    <form className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <form onSubmit={handleSubmit} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Shop</label>
@@ -147,7 +192,12 @@ export default function VisitRegistrationPage() {
                                     onChange={(e) => setFormData({ ...formData, courseId: e.target.value })}
                                 >
                                     <option value="">メニューを選択</option>
-                                    <option value="1">全身脱毛 5回パック</option>
+                                    {/* 取得したコースデータを動的に表示 */}
+                                    {courses?.map((course) => (
+                                        <option key={course.id} value={course.id}>
+                                            {course.name} (¥{course.price.toLocaleString()})
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                         </div>

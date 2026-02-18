@@ -1,4 +1,100 @@
 basePath: /api/v1
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  salon-app_backend_internal_model.Course:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      name:
+        description: 'コース名称 (例: "全身脱毛 5回パック", "カット")'
+        type: string
+      price:
+        description: 販売価格 (税込み/税抜きは運用に合わせる)
+        type: integer
+      store:
+        allOf:
+        - $ref: '#/definitions/salon-app_backend_internal_model.Store'
+        description: 店舗情報へのリレーション
+      store_id:
+        description: 所属店舗ID。多店舗展開時に使用
+        type: integer
+      total_count:
+        description: 規定回数。単発は1、回数券は5や10などを設定
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  salon-app_backend_internal_model.Customer:
+    properties:
+      address1:
+        description: 市区町村・町域
+        type: string
+      address2:
+        description: ビル・マンション名
+        type: string
+      birth_date:
+        description: 日付型がおすすめ
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      first_name:
+        type: string
+      first_name_kana:
+        type: string
+      id:
+        type: integer
+      last_name:
+        description: 名前（フリガナ含め分けているのはGood!）
+        type: string
+      last_name_kana:
+        type: string
+      phone:
+        description: uintからstringへ変更
+        type: string
+      pref_name:
+        description: 文字列で持つパターン
+        type: string
+      sex:
+        description: 属性情報
+        type: string
+      store:
+        $ref: '#/definitions/salon-app_backend_internal_model.Store'
+      store_id:
+        description: 店舗紐付け
+        type: integer
+      updatedAt:
+        type: string
+      zip_code:
+        description: 住所（ポストくん構成）
+        type: string
+    type: object
+  salon-app_backend_internal_model.Store:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      name:
+        description: 店舗名
+        type: string
+      updatedAt:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -6,6 +102,21 @@ info:
   title: Salon App API
   version: "1.0"
 paths:
+  /course:
+    get:
+      consumes:
+      - application/json
+      description: コース一覧
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/salon-app_backend_internal_model.Course'
+      summary: コース一覧
+      tags:
+      - system
   /course-registration:
     post:
       consumes:
@@ -38,6 +149,21 @@ paths:
               type: string
             type: object
       summary: 顧客登録
+      tags:
+      - system
+  /customer-search:
+    get:
+      consumes:
+      - application/json
+      description: 顧客検索(苗字：ひらがな)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/salon-app_backend_internal_model.Customer'
+      summary: 顧客検索(苗字：ひらがな)
       tags:
       - system
   /login:

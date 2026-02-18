@@ -39,7 +39,7 @@ export default function Dashboard() {
                 </Link>
 
                 {/* 来店登録 */}
-                <Link href="" className="block group">
+                <Link href="/visit" className="block group">
                     <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 hover:shadow-md transition-shadow">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">

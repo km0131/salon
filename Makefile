@@ -5,7 +5,7 @@
 gen-api:
 	@echo "--- Generating Swagger ---"
 	# --dir ./ を追加して backend フォルダ全体をスキャン対象にする
-	cd backend && CGO_ENABLED=0 swag init -g cmd/main.go --dir ./ --output docs
+	cd backend && CGO_ENABLED=0 swag init -g cmd/main.go --dir ./ --output docs --parseDependency
 
 	@echo "--- Converting Swagger 2.0 to OpenAPI 3.0 ---"
 	cd backend && npx swagger2openapi docs/swagger.yaml -o docs/openapi.yaml --yaml

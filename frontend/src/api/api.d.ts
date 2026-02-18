@@ -4,6 +4,45 @@
  */
 
 export interface paths {
+    "/course": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * コース一覧
+         * @description コース一覧
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["salon-app_backend_internal_model.Course"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/course-registration": {
         parameters: {
             query?: never;
@@ -80,6 +119,45 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/customer-search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 顧客検索(苗字：ひらがな)
+         * @description 顧客検索(苗字：ひらがな)
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["salon-app_backend_internal_model.Customer"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -335,7 +413,65 @@ export interface paths {
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: never;
+    schemas: {
+        "gorm.DeletedAt": {
+            time?: string;
+            /** @description Valid is true if Time is not NULL */
+            valid?: boolean;
+        };
+        "salon-app_backend_internal_model.Course": {
+            createdAt?: string;
+            deletedAt?: components["schemas"]["gorm.DeletedAt"];
+            id?: number;
+            /** @description コース名称 (例: "全身脱毛 5回パック", "カット") */
+            name?: string;
+            /** @description 販売価格 (税込み/税抜きは運用に合わせる) */
+            price?: number;
+            /** @description 店舗情報へのリレーション */
+            store?: components["schemas"]["salon-app_backend_internal_model.Store"];
+            /** @description 所属店舗ID。多店舗展開時に使用 */
+            store_id?: number;
+            /** @description 規定回数。単発は1、回数券は5や10などを設定 */
+            total_count?: number;
+            updatedAt?: string;
+        };
+        "salon-app_backend_internal_model.Customer": {
+            /** @description 市区町村・町域 */
+            address1?: string;
+            /** @description ビル・マンション名 */
+            address2?: string;
+            /** @description 日付型がおすすめ */
+            birth_date?: string;
+            createdAt?: string;
+            deletedAt?: components["schemas"]["gorm.DeletedAt"];
+            first_name?: string;
+            first_name_kana?: string;
+            id?: number;
+            /** @description 名前（フリガナ含め分けているのはGood!） */
+            last_name?: string;
+            last_name_kana?: string;
+            /** @description uintからstringへ変更 */
+            phone?: string;
+            /** @description 文字列で持つパターン */
+            pref_name?: string;
+            /** @description 属性情報 */
+            sex?: string;
+            store?: components["schemas"]["salon-app_backend_internal_model.Store"];
+            /** @description 店舗紐付け */
+            store_id?: number;
+            updatedAt?: string;
+            /** @description 住所（ポストくん構成） */
+            zip_code?: string;
+        };
+        "salon-app_backend_internal_model.Store": {
+            createdAt?: string;
+            deletedAt?: components["schemas"]["gorm.DeletedAt"];
+            id?: number;
+            /** @description 店舗名 */
+            name?: string;
+            updatedAt?: string;
+        };
+    };
     responses: never;
     parameters: never;
     requestBodies: never;

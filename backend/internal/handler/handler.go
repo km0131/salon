@@ -52,5 +52,10 @@ type CustomerRegistrationRequest struct {
 	StoreID uint `json:"store_id" binding:"required"`
 }
 
+type CustomerSearchRequest struct {
+	LastNameKana string `json:"last_name_kana" binding:"required"`
+}
 
-
+type StoreUpdateRequest struct {
+	Name string `json:"name" binding:"required"`
+}

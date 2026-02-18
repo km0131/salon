@@ -8,6 +8,7 @@ package main // ← 必ず1行目！
 import (
     "time"
     "fmt"
+    "log"
     "github.com/gin-contrib/cors"
     "github.com/gin-gonic/gin"
     "salon-app/backend/internal/handler" 
@@ -203,11 +204,48 @@ func CourseRegistrationHandler(c *gin.Context) {
 // @Router       /visit-registration [post]
 func VisitRegistrationHandler(c *gin.Context) {
     var req handler.VisitRegistrationRequest
+    var ticket model.Ticket
     if err := c.ShouldBindJSON(&req); err != nil {
-        c.Error(err)
+        log.Printf("BindJSON error: %v", err)
         c.JSON(400, gin.H{"error": "入力が正しくありません"})
         return
     }
+    //　コースの検索
+    var course model.Course
+    if err := db.DB.First(&course, req.CourseID).Error; err != nil {
+        c.JSON(404, gin.H{"error": "コースが見つかりません"})
+        return
+    }
+    // チケットの検索
+    result := db.DB.Where("customer_id = ? AND course_id = ? AND is_completed = ?", 
+             req.CustomerID, req.CourseID, false).First(&ticket)
+    // なければ作成
+    if result.Error != nil {
+        // なければ新規チケットを Course.TotalCount で作成
+        ticket = model.Ticket{
+            CustomerID:   req.CustomerID,
+            CourseID:     req.CourseID,
+            TotalCount:   course.TotalCount,
+            CurrentCount: 0,      // まだ 0 回消化
+            IsCompleted:  false,
+            StoreID:      req.StoreID,
+        }
+        db.DB.Create(&ticket)
+    }
+    // チケットの更新
+    ticket.CurrentCount += 1
+    // 今回の＋1で規定回数に達した（または超えた）かチェック
+    if ticket.CurrentCount >= ticket.TotalCount {
+        ticket.IsCompleted = true
+        log.Printf("チケットを使い切りました！ (ID: %d, Count: %d/%d)", 
+            ticket.ID, ticket.CurrentCount, ticket.TotalCount)
+    }
+    if err := db.DB.Save(&ticket).Error; err != nil {
+        log.Printf("チケットの更新に失敗: %v", err)
+        c.JSON(500, gin.H{"error": "チケットの更新に失敗しました"})
+        return
+    }
+    //　来店記録の作成
     var visit model.Visit
     visit.CustomerID = req.CustomerID
     visit.CourseID = req.CourseID
@@ -258,6 +296,104 @@ func CustomerRegistrationHandler(c *gin.Context) {
     c.JSON(200, gin.H{"message": "登録完了"})
 }
 
+// @Summary      顧客検索(苗字：ひらがな)
+// @Description  顧客検索(苗字：ひらがな)
+// @Tags         system
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} model.Customer
+// @Router       /customer-search [get]
+func GetCustomerSearchHandler(c *gin.Context) {
+    // 1人ではなく、複数人を格納するためにスライス（[]）で定義
+    var customers []model.Customer
+    var req handler.CustomerSearchRequest
+
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.Error(err)
+        c.JSON(400, gin.H{"error": "入力が正しくありません"})
+        return
+    }
+
+    fmt.Println("検索開始")
+    fmt.Println(req.LastNameKana)
+
+    // 文字列が空の場合は検索せずに空配列を返す（DB負荷軽減）
+    if req.LastNameKana == "" {
+        c.JSON(200, []model.Customer{})
+        return
+    }
+
+    query := "%" + req.LastNameKana + "%"
+    if err := db.DB.Where("last_name_kana LIKE ?", query).Limit(10).Find(&customers).Error; err != nil {
+        c.Error(err)
+        c.JSON(500, gin.H{"error": "検索中にエラーが発生しました"})
+        return
+    }
+
+    fmt.Println("検索結果")
+    fmt.Println(customers)
+
+    // 結果が0件でも空のスライス [] が返るので、フロントで扱いやすくなります
+    c.JSON(200, customers)
+}
+
+// @Summary      コース一覧
+// @Description  コース一覧
+// @Tags         system
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} model.Course
+// @Router       /course [get]
+func GetCourseHandler(c *gin.Context) {
+    var courses []model.Course
+    if err := db.DB.Find(&courses).Error; err != nil {
+        c.Error(err)
+        c.JSON(500, gin.H{"error": "Failed to get courses"})
+        return
+    }
+    c.JSON(200, courses)
+}
+
+// @Summary      コース一覧
+// @Description  コース一覧
+// @Tags         system
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} model.Course
+// @Router       /course [get]
+func UpdateStoreHandler(c *gin.Context) {
+    id := c.Param("id") // URLの末尾（/api/v1/stores/5）からIDを取得
+    var store model.Store
+
+    // 1. 指定されたIDのデータがDBにあるか確認
+    if err := db.DB.First(&store, id).Error; err != nil {
+        c.JSON(404, gin.H{"error": "店舗が見つかりません"})
+        return
+    }
+
+    // 2. フロントから届いた新しい名前などを読み込む
+    if err := c.ShouldBindJSON(&store); err != nil {
+        c.JSON(400, gin.H{"error": "入力データが正しくありません"})
+        return
+    }
+
+    // 3. DBを更新する
+    db.DB.Save(&store)
+
+    c.JSON(200, store)
+}
+
+// 顧客一覧取得 (現在はコメントアウトされていますが、定義だけしておくとエラーを防げます)
+func GetCustomerHandler(c *gin.Context) {
+    c.JSON(200, gin.H{"message": "Customer list endpoint"})
+}
+
+// 来店一覧取得
+func GetVisitHandler(c *gin.Context) {
+    c.JSON(200, gin.H{"message": "Visit list endpoint"})
+}
+
+
 func main() {
     db.InitDB()
     db.DB.AutoMigrate(&model.User{}, &model.Store{}, &model.Customer{}, &model.Course{}, &model.Visit{}, &model.Ticket{})
@@ -280,12 +416,16 @@ func main() {
         // main関数の中のインライン定義ではなく、上で定義した関数を使う
         v1.GET("/ping", PingHandler)
         v1.GET("/store", GetStoreHandler)//店舗一覧
+        v1.GET("/customer", GetCustomerHandler)//顧客一覧
+        v1.GET("/course", GetCourseHandler)//コース一覧
         v1.POST("/signup", SignUpHandler) // 新規登録
         v1.POST("/login", LoginHandler)   // ログイン
         v1.POST("/store-registration", StoreRegistrationHandler) // 店舗登録
         v1.POST("/course-registration", CourseRegistrationHandler) // コース登録
         v1.POST("/visit-registration", VisitRegistrationHandler) // 来店登録
         v1.POST("/customer-registration", CustomerRegistrationHandler) // 顧客登録
+        v1.POST("/customer-search", GetCustomerSearchHandler)//顧客検索(苗字：ひらがな)
+        v1.PUT("/store/:id", UpdateStoreHandler)//店舗更新
     }
 
     r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
