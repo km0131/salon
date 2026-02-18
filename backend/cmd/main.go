@@ -184,6 +184,7 @@ func CourseRegistrationHandler(c *gin.Context) {
     var course model.Course
     course.Name = req.Name
     course.Price = req.Price
+    course.TotalCount = req.TotalCount
     course.StoreID = req.StoreID
     if err := db.DB.Create(&course).Error; err != nil {
         c.Error(err)
@@ -210,6 +211,8 @@ func VisitRegistrationHandler(c *gin.Context) {
     var visit model.Visit
     visit.CustomerID = req.CustomerID
     visit.CourseID = req.CourseID
+    visit.TicketID = req.TicketID
+    visit.VisitCount = req.VisitCount
     visit.StoreID = req.StoreID
     visit.Memo = req.Memo
     if err := db.DB.Create(&visit).Error; err != nil {
@@ -257,7 +260,7 @@ func CustomerRegistrationHandler(c *gin.Context) {
 
 func main() {
     db.InitDB()
-    db.DB.AutoMigrate(&model.User{}, &model.Store{}, &model.Customer{}, &model.Course{}, &model.Visit{})
+    db.DB.AutoMigrate(&model.User{}, &model.Store{}, &model.Customer{}, &model.Course{}, &model.Visit{}, &model.Ticket{})
 
     r := gin.Default()
 

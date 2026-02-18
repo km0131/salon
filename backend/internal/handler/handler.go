@@ -24,12 +24,15 @@ type StoreRegistrationRequest struct {
 type CourseRegistrationRequest struct {
 	Name string `json:"name" binding:"required"`
 	Price int `json:"price" binding:"required"`
+	TotalCount int `json:"total_count" binding:"required"`
 	StoreID uint `json:"store_id" binding:"required"`
 }
 
 type VisitRegistrationRequest struct {
 	CustomerID uint `json:"customer_id" binding:"required"`
 	CourseID uint `json:"course_id" binding:"required"`
+	TicketID *uint `json:"ticket_id"`
+	VisitCount int `json:"visit_count"`
 	StoreID uint `json:"store_id" binding:"required"`
 	Memo string `json:"memo"`
 }

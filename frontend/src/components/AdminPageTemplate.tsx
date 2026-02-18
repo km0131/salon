@@ -40,6 +40,8 @@ export default function AdminPageTemplate({ title, children }: Props) {
                         <div className="absolute top-14 left-0 w-56 bg-white/90 backdrop-blur-xl border border-white shadow-2xl rounded-3xl p-4 animate-in fade-in slide-in-from-top-2 duration-200">
                             <nav className="flex flex-col gap-2">
                                 <Link href="/dashboard" className="px-4 py-3 hover:bg-indigo-50 rounded-xl text-sm text-slate-600 transition-colors">ダッシュボード</Link>
+                                <Link href="/newregistration" className="px-4 py-3 hover:bg-indigo-50 rounded-xl text-sm text-slate-600 transition-colors">新規顧客登録</Link>
+                                <Link href="/course" className="px-4 py-3 hover:bg-indigo-50 rounded-xl text-sm text-slate-600 transition-colors">コース登録</Link>
                                 <Link href="/store" className="px-4 py-3 hover:bg-indigo-50 rounded-xl text-sm text-slate-600 transition-colors">店舗登録</Link>
                                 <Link href="/staff" className="px-4 py-3 hover:bg-indigo-50 rounded-xl text-sm text-slate-600 transition-colors">スタッフ登録</Link>
                                 <div className="h-px bg-slate-100 my-1"></div>
