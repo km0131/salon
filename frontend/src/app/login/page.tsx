@@ -68,7 +68,10 @@ export default function LoginPage() {
                             />
                         </div>
                         <h1 className="text-2xl font-light tracking-widest text-slate-800 uppercase">
-                            Salon Grado
+                            {/* 日本語の調整 */}
+                            <span className="font-medium">
+                                Salonグラード
+                            </span>
                         </h1>
                         <p className="text-sm text-slate-400 mt-1">顧客管理用WEBシステム</p>
                     </div>

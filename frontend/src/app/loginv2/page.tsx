@@ -38,13 +38,11 @@ export default function LoginPage() {
                 body: JSON.stringify(payload),
             });
             const data = await response.json();
+            if (!response.ok) throw new Error("ログインに失敗しました");
             // --- 成功時の処理 ---
             login(data.token);
             // ダッシュボードへ移動
             router.push("/dashboard");
-            if (!response.ok) throw new Error("ログインに失敗しました");
-
-            alert("ログインしました！");
         } catch (error) {
             setErrorMsg("パスワードまたはメールアドレスが正しくありません");
         } finally {

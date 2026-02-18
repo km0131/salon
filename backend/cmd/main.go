@@ -167,9 +167,97 @@ func LoginHandler(c *gin.Context) {
     })
 }
 
+// @Summary      コース登録
+// @Description  コース登録
+// @Tags         system
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} map[string]string
+// @Router       /course-registration [post]
+func CourseRegistrationHandler(c *gin.Context) {
+    var req handler.CourseRegistrationRequest
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.Error(err)
+        c.JSON(400, gin.H{"error": "入力が正しくありません"})
+        return
+    }
+    var course model.Course
+    course.Name = req.Name
+    course.Price = req.Price
+    course.StoreID = req.StoreID
+    if err := db.DB.Create(&course).Error; err != nil {
+        c.Error(err)
+        c.JSON(500, gin.H{"error": "Failed to register course"})
+        return
+    }
+    c.JSON(200, gin.H{"message": "登録完了"})
+}
+
+// @Summary      来店登録
+// @Description  来店登録
+// @Tags         system
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} map[string]string
+// @Router       /visit-registration [post]
+func VisitRegistrationHandler(c *gin.Context) {
+    var req handler.VisitRegistrationRequest
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.Error(err)
+        c.JSON(400, gin.H{"error": "入力が正しくありません"})
+        return
+    }
+    var visit model.Visit
+    visit.CustomerID = req.CustomerID
+    visit.CourseID = req.CourseID
+    visit.StoreID = req.StoreID
+    visit.Memo = req.Memo
+    if err := db.DB.Create(&visit).Error; err != nil {
+        c.Error(err)
+        c.JSON(500, gin.H{"error": "Failed to register visit"})
+        return
+    }
+    c.JSON(200, gin.H{"message": "登録完了"})
+}
+
+// @Summary      顧客登録
+// @Description  顧客登録
+// @Tags         system
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} map[string]string
+// @Router       /customer-registration [post]
+func CustomerRegistrationHandler(c *gin.Context) {
+    var req handler.CustomerRegistrationRequest
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.Error(err)
+        c.JSON(400, gin.H{"error": "入力が正しくありません"})
+        return
+    }
+    var customer model.Customer
+    customer.LastName = req.LastName
+    customer.FirstName = req.FirstName
+    customer.LastNameKana = req.LastNameKana
+    customer.FirstNameKana = req.FirstNameKana
+    customer.ZipCode = req.ZipCode
+    customer.PrefName = req.PrefName
+    customer.Address1 = req.Address1
+    customer.Address2 = req.Address2
+    customer.Sex = req.Sex
+    customer.BirthDate = req.BirthDate
+    customer.Phone = req.Phone
+    customer.StoreID = req.StoreID
+    if err := db.DB.Create(&customer).Error; err != nil {
+        c.Error(err)
+        c.JSON(500, gin.H{"error": "Failed to register customer"})
+        return
+    }
+    c.JSON(200, gin.H{"message": "登録完了"})
+}
+
 func main() {
     db.InitDB()
-    db.DB.AutoMigrate(&model.User{},&model.Store{})
+    db.DB.AutoMigrate(&model.User{}, &model.Store{}, &model.Customer{}, &model.Course{}, &model.Visit{})
 
     r := gin.Default()
 
@@ -192,6 +280,9 @@ func main() {
         v1.POST("/signup", SignUpHandler) // 新規登録
         v1.POST("/login", LoginHandler)   // ログイン
         v1.POST("/store-registration", StoreRegistrationHandler) // 店舗登録
+        v1.POST("/course-registration", CourseRegistrationHandler) // コース登録
+        v1.POST("/visit-registration", VisitRegistrationHandler) // 来店登録
+        v1.POST("/customer-registration", CustomerRegistrationHandler) // 顧客登録
     }
 
     r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

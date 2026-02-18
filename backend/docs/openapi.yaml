@@ -5,6 +5,36 @@ info:
   title: Salon App API
   version: "1.0"
 paths:
+  /course-registration:
+    post:
+      description: コース登録
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+      summary: コース登録
+      tags:
+        - system
+  /customer-registration:
+    post:
+      description: 顧客登録
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+      summary: 顧客登録
+      tags:
+        - system
   /login:
     post:
       description: ログイン
@@ -78,6 +108,21 @@ paths:
                   type: string
                 type: object
       summary: 店舗登録
+      tags:
+        - system
+  /visit-registration:
+    post:
+      description: 来店登録
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+      summary: 来店登録
       tags:
         - system
 servers:
