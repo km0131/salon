@@ -36,6 +36,27 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "description": "コース一覧",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "コース一覧",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/salon-app_backend_internal_model.Course"
+                        }
+                    }
+                }
             }
         },
         "/course-registration": {
@@ -59,6 +80,87 @@ const docTemplate = `{
                             "additionalProperties": {
                                 "type": "string"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/course/:id": {
+            "put": {
+                "description": "コース更新",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "コース更新",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/salon-app_backend_internal_model.Course"
+                        }
+                    }
+                }
+            }
+        },
+        "/course/{id}": {
+            "delete": {
+                "description": "指定したIDのコースを論理削除します",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "course"
+                ],
+                "summary": "コース削除",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Course ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/customer": {
+            "get": {
+                "description": "顧客一覧取得",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "顧客一覧",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/salon-app_backend_internal_model.Customer"
                         }
                     }
                 }
@@ -103,6 +205,29 @@ const docTemplate = `{
                     "system"
                 ],
                 "summary": "顧客検索(苗字：ひらがな)",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/salon-app_backend_internal_model.Customer"
+                        }
+                    }
+                }
+            }
+        },
+        "/customer/:id": {
+            "put": {
+                "description": "顧客更新",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "顧客更新",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -243,6 +368,124 @@ const docTemplate = `{
                 }
             }
         },
+        "/ticket": {
+            "get": {
+                "description": "チケット一覧",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "チケット一覧",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ticket/:id": {
+            "put": {
+                "description": "チケット更新",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "チケット更新",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/salon-app_backend_internal_model.Ticket"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "スタッフ一覧取得",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "スタッフ一覧 (ユーザー一覧)",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/salon-app_backend_internal_model.User"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/:id": {
+            "put": {
+                "description": "スタッフ更新",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "スタッフ更新",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/salon-app_backend_internal_model.User"
+                        }
+                    }
+                }
+            }
+        },
+        "/visit": {
+            "get": {
+                "description": "来店履歴一覧取得",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "来店履歴一覧",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/salon-app_backend_internal_model.Visit"
+                        }
+                    }
+                }
+            }
+        },
         "/visit-registration": {
             "post": {
                 "description": "来店登録",
@@ -264,6 +507,52 @@ const docTemplate = `{
                             "additionalProperties": {
                                 "type": "string"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/visit/:id": {
+            "put": {
+                "description": "来店履歴更新",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "来店履歴更新",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/salon-app_backend_internal_model.Visit"
+                        }
+                    }
+                }
+            }
+        },
+        "/visit/search": {
+            "get": {
+                "description": "来店履歴検索",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "来店履歴検索",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/salon-app_backend_internal_model.Visit"
                         }
                     }
                 }
@@ -407,6 +696,151 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "salon-app_backend_internal_model.Ticket": {
+            "type": "object",
+            "properties": {
+                "course": {
+                    "$ref": "#/definitions/salon-app_backend_internal_model.Course"
+                },
+                "course_id": {
+                    "description": "どのコースのチケットか",
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "current_count": {
+                    "description": "現在までに消化した回数 (来店ごとにインクリメント)",
+                    "type": "integer"
+                },
+                "customer": {
+                    "description": "リレーション",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/salon-app_backend_internal_model.Customer"
+                        }
+                    ]
+                },
+                "customer_id": {
+                    "description": "購入した顧客のID",
+                    "type": "integer"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_completed": {
+                    "description": "全回数を使い切ったかどうかのフラグ",
+                    "type": "boolean"
+                },
+                "store_id": {
+                    "description": "購入・発行した店舗のID",
+                    "type": "integer"
+                },
+                "total_count": {
+                    "description": "購入時の最大回数 (Courseマスタからコピー)",
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "salon-app_backend_internal_model.User": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "role": {
+                    "description": "権限（例: admin, staff, customer）",
+                    "type": "string"
+                },
+                "store": {
+                    "description": "外部から呼び出し",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/salon-app_backend_internal_model.Store"
+                        }
+                    ]
+                },
+                "store_id": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "salon-app_backend_internal_model.Visit": {
+            "type": "object",
+            "properties": {
+                "course": {
+                    "$ref": "#/definitions/salon-app_backend_internal_model.Course"
+                },
+                "course_id": {
+                    "description": "今回実施したコースのID",
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "customer": {
+                    "description": "リレーション",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/salon-app_backend_internal_model.Customer"
+                        }
+                    ]
+                },
+                "customer_id": {
+                    "description": "来店した顧客のID",
+                    "type": "integer"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "memo": {
+                    "description": "施術内容や顧客の反応などのメモ",
+                    "type": "string"
+                },
+                "store_id": {
+                    "description": "来店した店舗のID",
+                    "type": "integer"
+                },
+                "ticket": {
+                    "$ref": "#/definitions/salon-app_backend_internal_model.Ticket"
+                },
+                "ticket_id": {
+                    "description": "TicketID:\n回数券利用の場合はTicketIDを保存。単発(その場で支払い)の場合は null。\nポインタ(*uint)にすることで、DB上でNULLを許容する。",
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "visit_count": {
+                    "description": "VisitCount:\nこの来店がそのチケットにとって「何回目」だったかをスナップショットとして記録。\nチケット残数計算の履歴の整合性を保つために保持。",
+                    "type": "integer"
                 }
             }
         }

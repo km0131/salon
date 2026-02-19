@@ -54,7 +54,7 @@ services:
       command: npm run dev
       environment:
         - NEXT_PUBLIC_API_URL=http://localhost:8080
-        - NODE_OPTIONS=--max-old-space-size=1024 # ← これを追加！ラズパイのメモリを使いすぎないよう制限
+        - NODE_OPTIONS=--max-old-space-size=1024 # 💡 2GBまで許可する
         - WATCHPACK_POLLING=true
         - CHOKIDAR_USEPOLLING=true # これを追加（古い検知方式もカバー）
       depends_on:

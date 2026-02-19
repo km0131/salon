@@ -2,143 +2,73 @@
 
 import React, { useState } from "react";
 import AdminPageTemplate from "@/components/AdminPageTemplate";
-import { useStores, StoreListItem } from "@/hooks/useStores"; // スタッフ登録と同じHookを使用
+import CourseForm from "./CourseForm";
+import { useCourses, CourseListItem } from "@/hooks/useCourses";
 
-export default function CourseRegistrationPage() {
-    // スタッフ登録画面と同じ取得ロジック
-    const { data: stores, isLoading } = useStores();
+export default function CoursePage() {
+    const [view, setView] = useState<"list" | "form">("list");
+    const [selectedCourse, setSelectedCourse] = useState<CourseListItem | null>(null);
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [formData, setFormData] = useState({
-        name: "",
-        price: 0,
-        totalCount: 1, // デフォルト 1
-        shopId: "", // スタッフ登録画面と統一
-    });
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!formData.shopId) {
-            alert("店舗を選択してください。");
-            return;
-        }
-
-        setIsSubmitting(true);
-
-        // Goのバックエンド（uint / int）に合わせたペイロード作成
-        const payload = {
-            name: formData.name,
-            price: formData.price,
-            total_count: formData.totalCount,
-            store_id: Number(formData.shopId),
-        };
-
-        try {
-            // TODO: Goバックエンド（コース登録用API）へ送信
-            console.log("送信データ:", payload);
-
-            const response = await fetch("https://api.kiiswebai.com/api/v1/course-registration", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
-            if (!response.ok) throw new Error("登録に失敗しました");
-            console.log("送信データ:", payload);
-            alert("コースを登録しました！");
-            setFormData({ name: "", price: 0, totalCount: 1, shopId: "" }); // リセット
-        } catch (error) {
-            alert("エラーが発生しました。");
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+    // Use the custom hook
+    const { data: courses = [], isLoading, refetch } = useCourses();
 
     return (
-        <AdminPageTemplate title="Course Registration">
-            <form onSubmit={handleSubmit} className="space-y-6">
-
-                {/* --- 店舗名選択 (スタッフ登録画面のロジックを移植) --- */}
-                <div>
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Shop</label>
-                    <div className="relative">
-                        <select
-                            required
-                            disabled={isLoading}
-                            value={formData.shopId}
-                            className="w-full mt-2 px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-200 outline-none transition-all appearance-none text-slate-600 disabled:opacity-50"
-                            onChange={(e) => setFormData({ ...formData, shopId: e.target.value })}
+        <AdminPageTemplate title={view === "list" ? "Course List" : (selectedCourse ? "Edit Course" : "New Course")}>
+            {view === "list" ? (
+                <div className="space-y-6">
+                    <div className="flex justify-between items-center border-b border-slate-100 pb-4">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                            登録コース数: {courses.length}
+                        </p>
+                        <button
+                            onClick={() => { setSelectedCourse(null); setView("form"); }}
+                            className="px-5 py-2 bg-indigo-500 text-white text-xs font-bold rounded-full hover:bg-indigo-600 transition-all shadow-md shadow-indigo-100 flex items-center gap-2"
                         >
-                            <option value="">{isLoading ? "読み込み中..." : "店舗を選択してください"}</option>
-                            {Array.isArray(stores) && stores.map((store: StoreListItem) => (
-                                <option key={store.id} value={store.id}>
-                                    {store.name}
-                                </option>
-                            ))}
-                        </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center pt-2 text-slate-400">
-                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
+                            コースを追加
+                        </button>
+                    </div>
+
+                    <div className="divide-y divide-slate-50">
+                        {isLoading ? (
+                            <div className="py-20 text-center animate-pulse">LOADING...</div>
+                        ) : courses.length === 0 ? (
+                            <div className="py-20 text-center text-slate-400 text-sm italic">コースが登録されていません</div>
+                        ) : (
+                            courses.map((course) => (
+                                <div key={course.ID} className="group flex items-center justify-between py-5 px-4 hover:bg-indigo-50/50 rounded-3xl transition-colors">
+                                    <div>
+                                        <h3 className="text-slate-700 font-bold">{course.name}</h3>
+                                        <p className="text-xs text-slate-400 mt-1">
+                                            ¥{course.price.toLocaleString()} / {course.total_count}回
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => { setSelectedCourse(course); setView("form"); }}
+                                        className="p-3 text-slate-300 hover:text-indigo-500"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
-
-                {/* --- コース名 --- */}
-                <div>
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Course Name</label>
-                    <input
-                        type="text"
-                        required
-                        className="w-full mt-2 px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
-                        placeholder="例: 一部位"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            ) : (
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <button onClick={() => setView("list")} className="mb-8 text-[10px] font-bold text-slate-400 hover:text-indigo-500 transition-colors uppercase tracking-widest">
+                        一覧に戻る
+                    </button>
+                    <CourseForm
+                        initialData={selectedCourse}
+                        onSuccess={() => {
+                            setView("list");
+                            refetch();
+                        }}
                     />
                 </div>
-
-                {/* --- 価格 --- */}
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Price</label>
-                        <div className="relative">
-                            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">¥</span>
-                            <input
-                                type="number"
-                                required
-                                min="0"
-                                className="w-full mt-2 pl-10 pr-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
-                                placeholder="4400"
-                                value={formData.price || ""}
-                                onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) || 0 })}
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Total Count (回数)</label>
-                        <input
-                            type="number"
-                            required
-                            min="1"
-                            className="w-full mt-2 px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
-                            placeholder="1"
-                            value={formData.totalCount}
-                            onChange={(e) => setFormData({ ...formData, totalCount: parseInt(e.target.value) || 1 })}
-                        />
-                    </div>
-                </div>
-
-                {/* --- 送信ボタン --- */}
-                <div className="pt-4">
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-4 rounded-2xl shadow-lg transition-all transform hover:-translate-y-1 disabled:opacity-50"
-                    >
-                        {isSubmitting ? "登録中..." : "コースを登録する"}
-                    </button>
-                </div>
-            </form>
+            )}
         </AdminPageTemplate>
     );
 }

@@ -35,7 +35,30 @@ export interface paths {
                 };
             };
         };
-        put?: never;
+        /**
+         * コース一覧
+         * @description コース一覧
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["salon-app_backend_internal_model.Course"];
+                    };
+                };
+            };
+        };
         post?: never;
         delete?: never;
         options?: never;
@@ -78,6 +101,128 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/course/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * コース更新
+         * @description コース更新
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["salon-app_backend_internal_model.Course"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/course/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * コース削除
+         * @description 指定したIDのコースを論理削除します
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Course ID */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            [key: string]: string;
+                        };
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/customer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 顧客一覧
+         * @description 顧客一覧取得
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["salon-app_backend_internal_model.Customer"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -157,6 +302,45 @@ export interface paths {
             };
         };
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/customer/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * 顧客更新
+         * @description 顧客更新
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["salon-app_backend_internal_model.Customer"];
+                    };
+                };
+            };
+        };
         post?: never;
         delete?: never;
         options?: never;
@@ -369,6 +553,203 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/ticket": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * チケット一覧
+         * @description チケット一覧
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            [key: string]: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ticket/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * チケット更新
+         * @description チケット更新
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["salon-app_backend_internal_model.Ticket"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * スタッフ一覧 (ユーザー一覧)
+         * @description スタッフ一覧取得
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["salon-app_backend_internal_model.User"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * スタッフ更新
+         * @description スタッフ更新
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["salon-app_backend_internal_model.User"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 来店履歴一覧
+         * @description 来店履歴一覧取得
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["salon-app_backend_internal_model.Visit"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/visit-registration": {
         parameters: {
             query?: never;
@@ -404,6 +785,84 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visit/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * 来店履歴更新
+         * @description 来店履歴更新
+         */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["salon-app_backend_internal_model.Visit"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visit/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 来店履歴検索
+         * @description 来店履歴検索
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["salon-app_backend_internal_model.Visit"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -470,6 +929,70 @@ export interface components {
             /** @description 店舗名 */
             name?: string;
             updatedAt?: string;
+        };
+        "salon-app_backend_internal_model.Ticket": {
+            course?: components["schemas"]["salon-app_backend_internal_model.Course"];
+            /** @description どのコースのチケットか */
+            course_id?: number;
+            createdAt?: string;
+            /** @description 現在までに消化した回数 (来店ごとにインクリメント) */
+            current_count?: number;
+            /** @description リレーション */
+            customer?: components["schemas"]["salon-app_backend_internal_model.Customer"];
+            /** @description 購入した顧客のID */
+            customer_id?: number;
+            deletedAt?: components["schemas"]["gorm.DeletedAt"];
+            id?: number;
+            /** @description 全回数を使い切ったかどうかのフラグ */
+            is_completed?: boolean;
+            /** @description 購入・発行した店舗のID */
+            store_id?: number;
+            /** @description 購入時の最大回数 (Courseマスタからコピー) */
+            total_count?: number;
+            updatedAt?: string;
+        };
+        "salon-app_backend_internal_model.User": {
+            createdAt?: string;
+            deletedAt?: components["schemas"]["gorm.DeletedAt"];
+            email?: string;
+            id?: number;
+            name?: string;
+            /** @description 権限（例: admin, staff, customer） */
+            role?: string;
+            /** @description 外部から呼び出し */
+            store?: components["schemas"]["salon-app_backend_internal_model.Store"];
+            store_id?: number;
+            updatedAt?: string;
+        };
+        "salon-app_backend_internal_model.Visit": {
+            course?: components["schemas"]["salon-app_backend_internal_model.Course"];
+            /** @description 今回実施したコースのID */
+            course_id?: number;
+            createdAt?: string;
+            /** @description リレーション */
+            customer?: components["schemas"]["salon-app_backend_internal_model.Customer"];
+            /** @description 来店した顧客のID */
+            customer_id?: number;
+            deletedAt?: components["schemas"]["gorm.DeletedAt"];
+            id?: number;
+            /** @description 施術内容や顧客の反応などのメモ */
+            memo?: string;
+            /** @description 来店した店舗のID */
+            store_id?: number;
+            ticket?: components["schemas"]["salon-app_backend_internal_model.Ticket"];
+            /**
+             * @description TicketID:
+             *     回数券利用の場合はTicketIDを保存。単発(その場で支払い)の場合は null。
+             *     ポインタ(*uint)にすることで、DB上でNULLを許容する。
+             */
+            ticket_id?: number;
+            updatedAt?: string;
+            /**
+             * @description VisitCount:
+             *     この来店がそのチケットにとって「何回目」だったかをスナップショットとして記録。
+             *     チケット残数計算の履歴の整合性を保つために保持。
+             */
+            visit_count?: number;
         };
     };
     responses: never;

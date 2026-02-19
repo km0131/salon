@@ -18,6 +18,18 @@ paths:
       summary: コース一覧
       tags:
         - system
+    put:
+      description: コース一覧
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/salon-app_backend_internal_model.Course"
+      summary: コース一覧
+      tags:
+        - system
   /course-registration:
     post:
       description: コース登録
@@ -31,6 +43,54 @@ paths:
                   type: string
                 type: object
       summary: コース登録
+      tags:
+        - system
+  /course/:id:
+    put:
+      description: コース更新
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/salon-app_backend_internal_model.Course"
+      summary: コース更新
+      tags:
+        - system
+  "/course/{id}":
+    delete:
+      description: 指定したIDのコースを論理削除します
+      parameters:
+        - description: Course ID
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+      summary: コース削除
+      tags:
+        - course
+  /customer:
+    get:
+      description: 顧客一覧取得
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/salon-app_backend_internal_model.Customer"
+      summary: 顧客一覧
       tags:
         - system
   /customer-registration:
@@ -59,6 +119,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/salon-app_backend_internal_model.Customer"
       summary: 顧客検索(苗字：ひらがな)
+      tags:
+        - system
+  /customer/:id:
+    put:
+      description: 顧客更新
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/salon-app_backend_internal_model.Customer"
+      summary: 顧客更新
       tags:
         - system
   /login:
@@ -136,6 +209,73 @@ paths:
       summary: 店舗登録
       tags:
         - system
+  /ticket:
+    get:
+      description: チケット一覧
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+      summary: チケット一覧
+      tags:
+        - system
+  /ticket/:id:
+    put:
+      description: チケット更新
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/salon-app_backend_internal_model.Ticket"
+      summary: チケット更新
+      tags:
+        - system
+  /users:
+    get:
+      description: スタッフ一覧取得
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/salon-app_backend_internal_model.User"
+      summary: スタッフ一覧 (ユーザー一覧)
+      tags:
+        - system
+  /users/:id:
+    put:
+      description: スタッフ更新
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/salon-app_backend_internal_model.User"
+      summary: スタッフ更新
+      tags:
+        - system
+  /visit:
+    get:
+      description: 来店履歴一覧取得
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/salon-app_backend_internal_model.Visit"
+      summary: 来店履歴一覧
+      tags:
+        - system
   /visit-registration:
     post:
       description: 来店登録
@@ -149,6 +289,32 @@ paths:
                   type: string
                 type: object
       summary: 来店登録
+      tags:
+        - system
+  /visit/:id:
+    put:
+      description: 来店履歴更新
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/salon-app_backend_internal_model.Visit"
+      summary: 来店履歴更新
+      tags:
+        - system
+  /visit/search:
+    get:
+      description: 来店履歴検索
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/salon-app_backend_internal_model.Visit"
+      summary: 来店履歴検索
       tags:
         - system
 servers:
@@ -249,4 +415,106 @@ components:
           type: string
         updatedAt:
           type: string
+      type: object
+    salon-app_backend_internal_model.Ticket:
+      properties:
+        course:
+          $ref: "#/components/schemas/salon-app_backend_internal_model.Course"
+        course_id:
+          description: どのコースのチケットか
+          type: integer
+        createdAt:
+          type: string
+        current_count:
+          description: 現在までに消化した回数 (来店ごとにインクリメント)
+          type: integer
+        customer:
+          allOf:
+            - $ref: "#/components/schemas/salon-app_backend_internal_model.Customer"
+          description: リレーション
+        customer_id:
+          description: 購入した顧客のID
+          type: integer
+        deletedAt:
+          $ref: "#/components/schemas/gorm.DeletedAt"
+        id:
+          type: integer
+        is_completed:
+          description: 全回数を使い切ったかどうかのフラグ
+          type: boolean
+        store_id:
+          description: 購入・発行した店舗のID
+          type: integer
+        total_count:
+          description: 購入時の最大回数 (Courseマスタからコピー)
+          type: integer
+        updatedAt:
+          type: string
+      type: object
+    salon-app_backend_internal_model.User:
+      properties:
+        createdAt:
+          type: string
+        deletedAt:
+          $ref: "#/components/schemas/gorm.DeletedAt"
+        email:
+          type: string
+        id:
+          type: integer
+        name:
+          type: string
+        role:
+          description: "権限（例: admin, staff, customer）"
+          type: string
+        store:
+          allOf:
+            - $ref: "#/components/schemas/salon-app_backend_internal_model.Store"
+          description: 外部から呼び出し
+        store_id:
+          type: integer
+        updatedAt:
+          type: string
+      type: object
+    salon-app_backend_internal_model.Visit:
+      properties:
+        course:
+          $ref: "#/components/schemas/salon-app_backend_internal_model.Course"
+        course_id:
+          description: 今回実施したコースのID
+          type: integer
+        createdAt:
+          type: string
+        customer:
+          allOf:
+            - $ref: "#/components/schemas/salon-app_backend_internal_model.Customer"
+          description: リレーション
+        customer_id:
+          description: 来店した顧客のID
+          type: integer
+        deletedAt:
+          $ref: "#/components/schemas/gorm.DeletedAt"
+        id:
+          type: integer
+        memo:
+          description: 施術内容や顧客の反応などのメモ
+          type: string
+        store_id:
+          description: 来店した店舗のID
+          type: integer
+        ticket:
+          $ref: "#/components/schemas/salon-app_backend_internal_model.Ticket"
+        ticket_id:
+          description: |-
+            TicketID:
+            回数券利用の場合はTicketIDを保存。単発(その場で支払い)の場合は null。
+            ポインタ(*uint)にすることで、DB上でNULLを許容する。
+          type: integer
+        updatedAt:
+          type: string
+        visit_count:
+          description: |-
+            VisitCount:
+            この来店がそのチケットにとって「何回目」だったかをスナップショットとして記録。
+            チケット残数計算の履歴の整合性を保つために保持。
+          type: integer
       type: object
