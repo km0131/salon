@@ -7,18 +7,19 @@ package main // ← 必ず1行目！
 
 import (
     "time"
+
     "github.com/gin-contrib/cors"
     "github.com/gin-gonic/gin"
-    "salon-app/backend/internal/handler" 
     swaggerFiles "github.com/swaggo/files"
     ginSwagger "github.com/swaggo/gin-swagger"
 
+    // 自前パッケージはすべて salon-app/backend に統一
     "salon-app/backend/internal/db"
+    "salon-app/backend/internal/handler"
     "salon-app/backend/internal/middleware"
     "salon-app/backend/internal/model"
     _ "salon-app/backend/docs"
 )
-
 func main() {
     db.InitDB()
     db.DB.AutoMigrate(&model.User{}, &model.Store{}, &model.Customer{}, &model.Course{}, &model.Visit{}, &model.Ticket{})
@@ -36,10 +37,15 @@ func main() {
 
     r.Use(middleware.ErrorHandler())
 
-    v1 := r.Group("/api/v1")
+    v0 := r.Group("/api/v0")
     {
-        // main関数の中のインライン定義ではなく、上で定義した関数を使う
-        v1.GET("/ping", handler.PingHandler)
+        v0.GET("/ping", handler.PingHandler)
+        v0.POST("/login", handler.LoginHandler)   // ログイン
+    }
+
+    v1 := r.Group("/api/v1")
+    v1.Use(middleware.AuthRequired())
+    {
         v1.GET("/store", handler.GetStoreHandler)//店舗一覧
         v1.GET("/customer", handler.GetCustomerHandler)//顧客一覧
         v1.GET("/course", handler.GetCourseHandler)//コース一覧
@@ -47,7 +53,6 @@ func main() {
         v1.GET("/visit", handler.GetVisitHandler)//来店履歴一覧
         v1.GET("/users", handler.GetUserListHandler)//スタッフ一覧
         v1.POST("/signup", handler.SignUpHandler) // 新規登録
-        v1.POST("/login", handler.LoginHandler)   // ログイン
         v1.POST("/store-registration", handler.StoreRegistrationHandler) // 店舗登録
         v1.POST("/course-registration", handler.CourseRegistrationHandler) // コース登録
         v1.POST("/visit-registration", handler.VisitRegistrationHandler) // 来店登録

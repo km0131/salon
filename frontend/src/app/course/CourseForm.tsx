@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useStores, StoreListItem } from "@/hooks/useStores";
-import { deleteResource } from "@/hooks/Delete";
+import { deleteResource } from "@/components/Delete";
 
 interface CourseFormProps {
     initialData?: {
@@ -86,7 +86,7 @@ export default function CourseForm({ initialData, onSuccess }: CourseFormProps) 
         try {
             // 3. 共通関数を呼び出す
             // 第一引数にリソース名 "course"、第二引数にIDを渡す
-            await deleteResource("course-delete", String(courseId));
+            await deleteResource("course", String(courseId));
 
             alert("コースを削除しました");
             onSuccess(); // 一覧に戻る処理を実行

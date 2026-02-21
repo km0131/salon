@@ -1,6 +1,7 @@
 package handler
 
 import (
+    "net/http" 
 	"github.com/gin-gonic/gin"
 	"salon-app/backend/internal/db"
 	"salon-app/backend/internal/model"
@@ -15,6 +16,15 @@ import (
 // @Success      200  {object}  map[string]string
 // @Router       /course/{id} [delete]
 func DeleteCourseHandler(c *gin.Context) {
+    role, exists := c.Get("role")
+    if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "ユーザー情報が見つかりません"})
+        return
+    }
+    if roleStr, ok := role.(string); !ok || (roleStr != "admin" && roleStr != "manager") {
+        c.JSON(http.StatusForbidden, gin.H{"error": "この操作を行う権限がありません"})
+        return
+    }
     // 1. URLパラメータからIDを取得
     id := c.Param("id")
     if id == "" {
