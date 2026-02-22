@@ -2,10 +2,9 @@ package utils
 
 import (
     "time"
+    "os"
     "github.com/golang-jwt/jwt/v5"
 )
-
-var secretKey = []byte("salon-app-secret-2026-debug") // 本来は環境変数から読み込む
 
 func GenerateToken(userID uint, userName string, role string, storeID uint, storeName string) (string, error) {
     claims := jwt.MapClaims{
@@ -18,5 +17,5 @@ func GenerateToken(userID uint, userName string, role string, storeID uint, stor
     }
 
     token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-    return token.SignedString(secretKey)
+    return token.SignedString([]byte(os.Getenv("JWT_SECRET_KEY")))
 }

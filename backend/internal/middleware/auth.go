@@ -42,6 +42,7 @@ func AuthRequired() gin.HandlerFunc {
 
 		// 4. エラーチェックとClaimsの取得
 		if err != nil || !token.Valid {
+			fmt.Printf("Auth Error for %s: %v\n", c.Request.URL.Path, err)
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "有効なトークンではありません"})
 			c.Abort()
 			return

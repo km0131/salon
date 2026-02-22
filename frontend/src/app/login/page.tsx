@@ -26,7 +26,7 @@ export default function LoginPage() {
         };
         try {
             // TODO: Goバックエンドへ送信
-            const response = await fetch("https://api.kiiswebai.com/api/v0/login", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v0/login`, {
                 method: "POST",
                 mode: "cors", // これを追加
                 headers: {

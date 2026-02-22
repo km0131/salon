@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useStores, StoreListItem } from "@/hooks/useStores";
 import { deleteResource } from "@/components/Delete";
+import { authFetch } from '@/components/Token';
 
 interface CourseFormProps {
     initialData?: {
@@ -50,24 +51,20 @@ export default function CourseForm({ initialData, onSuccess }: CourseFormProps) 
         try {
 
             const url = isEdit
-                ? `https://api.kiiswebai.com/api/v1/course/${initialData.ID}`
-                : "https://api.kiiswebai.com/api/v1/course-registration";
+                ? `/course/${initialData.ID}`
+                : "/course-registration";
 
             const method = isEdit ? "PUT" : "POST";
 
-            const response = await fetch(url, {
+            await authFetch(url, {
                 method: method,
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
-
-            if (!response.ok) throw new Error(`${isEdit ? "更新" : "登録"}に失敗しました`);
 
             alert(`コースを${isEdit ? "更新" : "登録"}しました！`);
             onSuccess();
         } catch (error) {
-            alert("エラーが発生しました。");
-            console.error(error);
+            alert(error instanceof Error ? error.message : "エラーが発生しました");
         } finally {
             setIsSubmitting(false);
         }
@@ -92,7 +89,6 @@ export default function CourseForm({ initialData, onSuccess }: CourseFormProps) 
             onSuccess(); // 一覧に戻る処理を実行
         } catch (error) {
             alert(error instanceof Error ? error.message : "削除に失敗しました");
-            console.error(error);
         } finally {
             setIsSubmitting(false);
         }

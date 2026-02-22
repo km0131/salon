@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import type { paths } from "@/api/api.d.ts";
+import { authFetch } from "@/components/Token";
 
 // OpenAPIから生成された型を抽出
 type CourseResponse = paths["/course"]["get"]["responses"]["200"]["content"]["application/json"];
@@ -15,7 +16,7 @@ export const useCourses = () => {
     return useQuery({
         queryKey: ["courses"],
         queryFn: async () => {
-            const response = await fetch("https://api.kiiswebai.com/api/v1/course");
+            const response = await authFetch("/courses");
 
             if (!response.ok) {
                 throw new Error("コースデータの取得に失敗しました");

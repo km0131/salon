@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import type { paths } from "@/api/api.d.ts"; // 自動生成された型
+import { authFetch } from "@/components/Token";
 
 // 型の抽出
 type StoreResponse = paths["/store"]["get"]["responses"]["200"]["content"]["application/json"];
@@ -16,7 +17,7 @@ export const useStores = () => {
     return useQuery<StoreListItem[]>({
         queryKey: ["stores"],
         queryFn: async (): Promise<StoreListItem[]> => {
-            const response = await fetch("https://api.kiiswebai.com/api/v1/store");
+            const response = await authFetch("/store");
             if (!response.ok) throw new Error("取得失敗");
 
             const data = await response.json();
