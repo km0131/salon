@@ -350,6 +350,29 @@ paths:
       summary: 顧客更新
       tags:
       - system
+  /customer/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 指定したIDの顧客を論理削除します
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: 顧客削除
+      tags:
+      - customer
   /login:
     post:
       consumes:

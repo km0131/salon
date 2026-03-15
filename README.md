@@ -203,11 +203,17 @@ docker compose up
 ```
 **バックエンドだけ再起動**
 ```
-docker-compose restart backend
+docker compose restart backend
 ```
 **フロントエンドだけ再起動**
 ```
-docker-compose restart frontend
+docker compose restart frontend
+```
+**Docker ログの確認**
+```
+docker compose logs -f
+docker compose logs -f backend
+docker compose logs -f frontend
 ```
 
 ### ローカルでの個別起動

@@ -13,7 +13,7 @@ export const useCourses = () => {
     return useQuery<CourseListItem[]>({
         queryKey: ["courses"],
         queryFn: async (): Promise<CourseListItem[]> => {
-            const response = await authFetch("/course");
+            const response = await authFetch("/courses");
             if (!response.ok) throw new Error("取得失敗");
 
             const data = await response.json();

@@ -5,6 +5,7 @@ import AdminPageTemplate from "@/components/AdminPageTemplate";
 import CustomerForm from "./CustomerForm";
 import { useCustomers, CustomerListItem } from "@/hooks/useCustomers";
 
+
 export default function CustomerRegistrationPage() {
     const [view, setView] = useState<"list" | "form">("list");
     const [selectedCustomer, setSelectedCustomer] = useState<CustomerListItem | null>(null);

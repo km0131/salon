@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import AdminPageTemplate from "@/components/AdminPageTemplate";
 import { useStores } from "@/hooks/useStores";
-import { useCourses } from "@/hooks/useCourse"; // 追加
+import { useCourse } from "@/hooks/useCourse"; // 追加
+import { authFetch } from "@/components/Token";
 
 interface Customer {
     ID: number;
@@ -14,7 +15,7 @@ interface Customer {
 
 export default function VisitRegistrationPage() {
     const { data: stores, isLoading: storesLoading } = useStores();
-    const { data: courses, isLoading: coursesLoading } = useCourses(); // 追加
+    const { data: courses, isLoading: coursesLoading } = useCourse(); // 追加
 
     // --- 検索・選択ステート ---
     const [searchQuery, setSearchQuery] = useState("");
@@ -44,7 +45,7 @@ export default function VisitRegistrationPage() {
         };
 
         try {
-            const res = await fetch("https://api.kiiswebai.com/api/v1/visit-registration", {
+            const res = await authFetch("/visit-registration", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
@@ -78,7 +79,7 @@ export default function VisitRegistrationPage() {
             setIsSearching(true);
             console.log(searchQuery);
             try {
-                const res = await fetch("https://api.kiiswebai.com/api/v1/customer-search", {
+                const res = await authFetch("/customer-search", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({

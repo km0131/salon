@@ -7,12 +7,12 @@ type CourseResponse = paths["/course"]["get"]["responses"]["200"]["content"]["ap
 
 // コンポーネントで扱う用の型（必要に応じて）
 export type CourseListItem = {
-    id: string;
+    ID: string;
     name: string;
     price: number;
 };
 
-export const useCourses = () => {
+export const useCourse = () => {
     return useQuery({
         queryKey: ["courses"],
         queryFn: async () => {

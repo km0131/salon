@@ -45,6 +45,7 @@ func HashPassword(password string) (string, error) {
 	encoded := fmt.Sprintf("$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s",
 		argon2.Version, p.memory, p.iterations, p.parallelism, b64Salt, b64Hash)
 
+	fmt.Println("Generated Hash:", encoded)
 	return encoded, nil
 }
 
@@ -73,8 +74,12 @@ func CheckPassword(password, encodedHash string) (bool, error) {
 		return false, err
 	}
 
+	fmt.Println("Decoded Hash:", decodedHash)
+
 	// ここはDBから読み取った値（memory, iterations等）をそのまま使う
 	hash := argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, uint32(len(decodedHash)))
+
+	fmt.Println("Generated Hash:", hash)
 
 	if subtle.ConstantTimeCompare(hash, decodedHash) == 1 {
 		return true, nil

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useStores, StoreListItem } from "@/hooks/useStores";
+import { authFetch } from '@/components/Token';
 
 interface StaffFormProps {
     initialData?: {
@@ -72,17 +73,14 @@ export default function StaffForm({ initialData, onSuccess }: StaffFormProps) {
         try {
             // URL & Method
             const url = isEdit
-                ? `https://api.kiiswebai.com/api/v1/users/${initialData.ID}`
-                : "https://api.kiiswebai.com/api/v1/signup";
+                ? `/users/${initialData.ID}`
+                : "/signup";
             const method = isEdit ? "PUT" : "POST";
 
-            const response = await fetch(url, {
+            await authFetch(url, {
                 method: method,
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
-
-            if (!response.ok) throw new Error(`${isEdit ? "更新" : "登録"}に失敗しました`);
 
             alert(`スタッフを${isEdit ? "更新" : "登録"}しました！`);
             onSuccess();

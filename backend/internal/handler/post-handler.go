@@ -97,10 +97,18 @@ func LoginHandler(c *gin.Context) {
     }
 
     // パスワードの照合 (Argon2)
-    // 保存されているハッシュ(user.Password)と、入力された平文(req.Password)を比較
     match, err := utils.CheckPassword(req.Password, user.Password)
-    if err != nil || !match {
-        c.Error(err)
+
+    // 1. err が発生した場合だけ c.Error(err) を呼ぶ
+    if err != nil {
+        c.Error(err) // ここは OK (err が nil ではないため)
+        c.JSON(500, gin.H{"error": "サーバーエラーが発生しました"})
+        return
+    }
+
+    // 2. match が false (パスワード不一致) の場合
+    if !match {
+        // ここで c.Error(err) を呼ぶと、err は nil なのでパニックになる
         c.JSON(401, gin.H{"error": "パスワードが正しくありません"})
         return
     }

@@ -2,6 +2,8 @@
 
 import React, { useState, useCallback } from "react";
 import { useStores, StoreListItem } from "@/hooks/useStores";
+import { authFetch } from "@/components/Token";
+import { deleteResource } from "@/components/Delete";
 
 interface CustomerFormProps {
     initialData?: {
@@ -84,11 +86,11 @@ export default function CustomerForm({ initialData, onSuccess }: CustomerFormPro
 
         try {
             const url = isEdit
-                ? `https://api.kiiswebai.com/api/v1/customer/${initialData.ID}`
-                : "https://api.kiiswebai.com/api/v1/customer-registration";
+                ? `/customer/${initialData?.ID}`
+                : "/customer-registration";
             const method = isEdit ? "PUT" : "POST";
 
-            const response = await fetch(url, {
+            const response = await authFetch(url, {
                 method: method,
                 headers: {
                     "Content-Type": "application/json",
@@ -104,6 +106,30 @@ export default function CustomerForm({ initialData, onSuccess }: CustomerFormPro
         } catch (error) {
             alert(`${isEdit ? "更新" : "登録"}に失敗しました`);
             console.error(error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    // handleSubmit の後に追加
+    const handleDelete = async () => {
+        // 1. IDがあるかチェック
+        const courseId = initialData?.ID;
+        if (!courseId) return;
+
+        // 2. 確認ダイアログ
+        if (!confirm("このコースを削除してもよろしいですか？")) return;
+
+        setIsSubmitting(true);
+        try {
+            // 3. 共通関数を呼び出す
+            // 第一引数にリソース名 "course"、第二引数にIDを渡す
+            await deleteResource("customer", String(courseId));
+
+            alert("顧客を削除しました");
+            onSuccess(); // 一覧に戻る処理を実行
+        } catch (error) {
+            alert(error instanceof Error ? error.message : "削除に失敗しました");
         } finally {
             setIsSubmitting(false);
         }
@@ -138,7 +164,7 @@ export default function CustomerForm({ initialData, onSuccess }: CustomerFormPro
             <div>
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Last Name (Kana)</label>
                 <input
-                    type="text" placeholder="セイ"
+                    type="text" placeholder="せい"
                     className="w-full mt-2 px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-200 outline-none disabled:opacity-50"
                     value={formData.lastNameKana}
                     onChange={(e) => setFormData({ ...formData, lastNameKana: e.target.value })}
@@ -148,7 +174,7 @@ export default function CustomerForm({ initialData, onSuccess }: CustomerFormPro
             <div>
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">First Name (Kana)</label>
                 <input
-                    type="text" placeholder="メイ"
+                    type="text" placeholder="めい"
                     className="w-full mt-2 px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-200 outline-none disabled:opacity-50"
                     value={formData.firstNameKana}
                     onChange={(e) => setFormData({ ...formData, firstNameKana: e.target.value })}
@@ -274,6 +300,29 @@ export default function CustomerForm({ initialData, onSuccess }: CustomerFormPro
                     className="w-full py-4 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-2xl shadow-lg transition-all active:scale-[0.98] disabled:opacity-50"
                 >
                     {isSubmitting ? "送信中..." : (isEdit ? "顧客情報を更新する" : "顧客情報を登録する")}
+                </button>
+            </div>
+            <div className="md:col-span-2 mt-6">
+                {/* 削除ボタン（編集モード時のみ） */}
+                {isEdit && (
+                    <button
+                        type="button"
+                        onClick={handleDelete}
+                        disabled={isSubmitting}
+                        className="w-full bg-white border-2 border-red-100 hover:bg-red-50 text-red-500 font-medium py-4 rounded-2xl transition-all disabled:opacity-50"
+                    >
+                        顧客を削除する
+                    </button>
+                )}
+            </div>
+            {/* 3. 戻るボタン (キャンセル) */}
+            <div className="md:col-span-2 mt-6">
+                <button
+                    type="button"
+                    onClick={() => router.push("/newregistration")}
+                    className="w-full py-4 text-slate-500 font-medium hover:bg-slate-50 rounded-2xl transition-all"
+                >
+                    一覧へ戻る
                 </button>
             </div>
         </form>

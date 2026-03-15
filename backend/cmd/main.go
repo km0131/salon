@@ -48,7 +48,7 @@ func main() {
     {
         v1.GET("/store", handler.GetStoreHandler)//店舗一覧
         v1.GET("/customer", handler.GetCustomerHandler)//顧客一覧
-        v1.GET("/course", handler.GetCourseHandler)//コース一覧
+        v1.GET("/courses", handler.GetCourseHandler)//コース一覧
         v1.GET("/ticket", handler.GetTicketHandler)//チケット一覧
         v1.GET("/visit", handler.GetVisitHandler)//来店履歴一覧
         v1.GET("/users", handler.GetUserListHandler)//スタッフ一覧
@@ -65,6 +65,7 @@ func main() {
         v1.PUT("/course/:id", handler.UpdateCourseHandler)//コース更新
         v1.PUT("/ticket/:id", handler.UpdateTicketHandler)//チケット更新
         v1.DELETE("/course/:id", handler.DeleteCourseHandler)//コース削除
+        v1.DELETE("/customer/:id", handler.DeleteCustomerHandler)//顧客削除
     }
 
     r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

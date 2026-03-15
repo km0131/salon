@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { authFetch } from "@/components/Token";
 
 export type StaffListItem = {
     ID: number;
@@ -12,7 +13,7 @@ export const useStaff = () => {
     return useQuery<StaffListItem[]>({
         queryKey: ["staff"],
         queryFn: async (): Promise<StaffListItem[]> => {
-            const response = await fetch("https://api.kiiswebai.com/api/v1/users");
+            const response = await authFetch("/users");
             if (!response.ok) throw new Error("取得失敗");
 
             const data = await response.json();

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import AdminPageTemplate from "@/components/AdminPageTemplate";
+import { authFetch } from '@/components/Token';
 
 interface StoreFormProps {
     initialData?: {
@@ -30,21 +31,14 @@ export default function StoreForm({ initialData, onSuccess }: StoreFormProps) {
 
         setIsSubmitting(true);
         try {
-            const url = isEdit ? `https://api.kiiswebai.com/api/v1/store/${initialData?.id}` : "https://api.kiiswebai.com/api/v1/store-registration";
+            const url = isEdit ? `/store/${initialData?.id}` :
+                "/store-registration";
             const method = isEdit ? "PUT" : "POST";
 
-            console.log("Request URL:", url); // ← これを 44行目の前に入れて確認
-            console.log("Request Method:", method);
-
-            const response = await fetch(url, {
+            await authFetch(url, {
                 method: method,
-                headers: {
-                    "Content-Type": "application/json",
-                },
                 body: JSON.stringify(formData),
             });
-
-            if (!response.ok) throw new Error(`${isEdit ? "更新" : "登録"}に失敗しました`);
 
             alert(`店舗を${isEdit ? "更新" : "登録"}しました！`);
             onSuccess();
